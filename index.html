@@ -540,10 +540,10 @@ const I18N = {
       'awwa-c605-si': {
         title: 'AWWA C605 SI (BNQ) — PVC métrique',
         context: 'Aqueduc neuf · PVC métrique (Canada)',
-        desc: "Version métrique adoptée au Canada (référencée notamment par BNQ 1809-300 et plusieurs devis municipaux). Calcul direct en unités SI.",
+        desc: "Version métrique adoptée au Canada (référencée notamment par BNQ 1809-300 et plusieurs devis municipaux). Calcul direct en unités SI en utilisant la longueur de la conduite (suppose des longueurs typiques de 6 m entre joints).",
         vars: [
           ['L', "perte admissible en litres par heure (L/h)"],
-          ['N', "nombre de joints sur la longueur testée"],
+          ['S', "longueur de la conduite testée, en mètres (m)"],
           ['D', "diamètre nominal de la conduite, en millimètres (mm)"],
           ['P', "pression moyenne du test, en kilopascals (kPa)"]
         ]
@@ -677,10 +677,10 @@ const I18N = {
       'awwa-c605-si': {
         title: 'AWWA C605 SI (BNQ) — Metric PVC',
         context: 'New water main · Metric PVC (Canada)',
-        desc: "Metric version adopted in Canada (referenced notably by BNQ 1809-300 and several municipal specifications). Direct calculation in SI units.",
+        desc: "Metric version adopted in Canada (referenced notably by BNQ 1809-300 and several municipal specifications). Direct calculation in SI units using pipe length (assumes typical 6 m lengths between joints).",
         vars: [
           ['L', "allowable leakage in liters per hour (L/h)"],
-          ['N', "number of joints in the length being tested"],
+          ['S', "length of pipe being tested, in meters (m)"],
           ['D', "nominal pipe diameter, in millimeters (mm)"],
           ['P', "average test pressure, in kilopascals (kPa)"]
         ]
@@ -736,7 +736,7 @@ const NORM_CONFIG = {
   'awwa-c600':           { group:'new',  formulaPlain:'L = (S × D × √P) / 148 000', needsLength:true,  needsJoints:false, needsPressure:true,  diamUnitKey:'unit.inches' },
   'awwa-c605-2013':      { group:'new',  formulaPlain:'L = (S × D × √P) / 148 000', needsLength:true,  needsJoints:false, needsPressure:true,  diamUnitKey:'unit.inches' },
   'awwa-c605-1994':      { group:'new',  formulaPlain:'L = (N × D × √P) / 7 400',   needsLength:false, needsJoints:true,  needsPressure:true,  diamUnitKey:'unit.inches' },
-  'awwa-c605-si':        { group:'new',  formulaPlain:'L = (N × D × √P) / 130 400', needsLength:false, needsJoints:true,  needsPressure:true,  diamUnitKey:'unit.inches' },
+  'awwa-c605-si':        { group:'new',  formulaPlain:'L = (S × D × √P) / 782 400', needsLength:true,  needsJoints:false, needsPressure:true,  diamUnitKey:'unit.inches' },
   'awwa-c906':           { group:'new',  formulaFromI18n:true, needsLength:false, needsJoints:false, needsPressure:false, diamUnitKey:'unit.inches', zeroLeak:true },
   'astm-f1216-pressure': { group:'cipp', formulaFromI18n:true, needsLength:true,  needsJoints:false, needsPressure:false, diamUnitKey:'unit.inches' },
   'astm-f1216-gravity':  { group:'cipp', formulaFromI18n:true, needsLength:true,  needsJoints:false, needsPressure:false, diamUnitKey:'unit.inches' },
@@ -930,11 +930,11 @@ document.getElementById('calc').addEventListener('click', () => {
       break;
     }
     case 'awwa-c605-si': {
-      lph = (N * Dmm * Math.sqrt(PkPa)) / 130400;
+      lph = (Lm * Dmm * Math.sqrt(PkPa)) / 782400;
       gph = lph / G_TO_L;
       calcHTML = `<b>${i18nNorm.title}</b><br>
-        L = (N × D × √P) / 130 400<br>
-        <span class="calc">= (${fmt(N,0)} × ${fmt(Dmm,1)} mm × √${fmt(PkPa,1)} kPa) / 130 400<br>
+        L = (S × D × √P) / 782 400<br>
+        <span class="calc">= (${fmt(Lm,1)} m × ${fmt(Dmm,1)} mm × √${fmt(PkPa,1)} kPa) / 782 400<br>
         = ${fmt(lph,4)} ${t('calc.lph')} = ${fmt(gph,4)} ${t('calc.gph')}</span>`;
       if (T < 2) messages.push(t('msg.min2h_si'));
       break;
